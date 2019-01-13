@@ -106,5 +106,15 @@ Using the same criteria as the histogram, I would go with a bandwidth of .9. I b
 # Reorganize the data so I have a type and servings column.
 
 ```{r reorganize_data}
-df %>%
+df %<>%
+  gather(key = "type", value = "servings", contains("_servings")) %>%
+  mutate(type = gsub("_servings", "", type))
+```
+
+## Evaluate the distribution of servings by type using at least three different methods. Provide a brief substantive conclusion.
+
+```{r visualize_servings_by_type}
+# save 
+ggplot(df, aes(x = type, y = servings)) +
+  geom_box()
 ```
