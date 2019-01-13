@@ -5,6 +5,8 @@ date: "1/13/2019"
 output: html_document
 ---
 
+# Write the code to load the data in directly from the web
+
 ```{r setup, include = FALSE}
 # load packages
 library(tidyverse)
@@ -15,3 +17,95 @@ df <- rio::import(file     = "https://github.com/fivethirtyeight/data/raw/master
   janitor::clean_names()
 ```
 
+# Explore the overall distribution of total alcohol consumed
+
+## Histogram
+
+### Play with the number of bins
+
+```{r histogram}
+# histogram with 5 bins
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_histogram(bins = 5, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# histogram with 10 bins
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_histogram(bins = 10, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# histogram with 13 bins
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_histogram(bins = 13, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# histogram with 15 bins
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_histogram(bins = 15, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# histogram with 25 bins
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_histogram(bins = 25, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# histogram with 50 bins
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_histogram(bins = 50, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# histogram with 100 bins
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_histogram(bins = 100, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+```
+
+### Justify the number of bins
+
+I think 13 bins is the correct number of bins for this dataset. If the idea is to give an impression of the underlying population distribution, 13 bins shows the nuance of the data, while not includign as much presumably random variation of the 15 bin histrogram. On the other side, the 5 bin histogram seems to hide too much of the underlying distribution. 
+
+## Density Plot
+
+```{r density_plots}
+# density plot with a bandwidth of .1
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_density(bw = .1, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# density plot with a bandwidth of .5
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_density(bw = .5, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# density plot with a bandwidth of .9
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_density(bw = .9, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# density plot with a bandwidth of 1
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_density(bw = 1, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# density plot with a bandwidth of 3
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_density(bw = 3, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# density plot with the default bandwidth
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_density(fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+
+```
+
+### Justify the bandwidth
+
+Using the same criteria as the histogram, I would go with a bandwidth of .9. I believe the .5 distribution provides too much nuance in the data and may be including too much random variation. A bandwidth of 1 and the default bandwidth, on the other hand, appear to minimize the valleys between the the peaks.
+
+# Reorganize the data so I have a type and servings column.
+
+```{r reorganize_data}
+df %>%
+```
