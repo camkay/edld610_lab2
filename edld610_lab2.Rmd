@@ -10,6 +10,7 @@ output: html_document
 ```{r setup, include = FALSE}
 # load packages
 library(tidyverse)
+library(magrittr)
 
 # import data
 df <- rio::import(file     = "https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv",
@@ -96,8 +97,6 @@ ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
 ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
   geom_density(fill = "darkorchid4", color = "gray17") +
   theme_bw()
-
-
 ```
 
 ### Justify the bandwidth
