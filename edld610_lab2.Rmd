@@ -1,0 +1,17 @@
+---
+title: "edld610_lab2"
+author: "Cameron Kay"
+date: "1/13/2019"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+# load packages
+library(tidyverse)
+
+# import data
+df <- rio::import(file     = "https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv",
+                  setclass = "tibble") %>%
+  janitor::clean_names()
+```
+
