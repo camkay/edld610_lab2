@@ -11,6 +11,7 @@ output: html_document
 # load packages
 library(tidyverse)
 library(magrittr)
+library(viridis)
 
 # import data
 df <- rio::import(file     = "https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv",
@@ -111,10 +112,30 @@ df %<>%
   mutate(type = gsub("_servings", "", type))
 ```
 
-## Evaluate the distribution of servings by type using at least three different methods. Provide a brief substantive conclusion.
+## Evaluate the distribution of servings by type using at least three different methods
 
 ```{r visualize_servings_by_type}
-# save 
-ggplot(df, aes(x = type, y = servings)) +
-  geom_box()
+# boxplot
+ggplot(df, aes(x = type, y = servings, fill = type)) +
+  geom_boxplot() +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw()
+
+# violin plot
+ggplot(df, aes(x = type, y = servings, fill = type)) +
+  geom_violin() +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw()
+
+# dotplot
+ggplot(df, aes(x = type, y = servings, fill = type)) +
+  geom_dotplot(binaxis = "y", stackdir = "center", binwidth = 5, alpha = .7) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw()
 ```
+
+## Conclusion
+
+Qualitatively, the average number of servings consumed appears to be lowest for wine and highest for beer. Spirits falls in the middle. Consumption of all types also appears to be positively skewed, with the majority of people consuming low levels of alcohol and a tail of increasing heavy drinkers. Win has a particularly skinny tail, with the vast majority of people cosuming little to no one and some individuals consuming quite a bit of wine. The greatest number of a type of serving was for spirits. 
+
+
