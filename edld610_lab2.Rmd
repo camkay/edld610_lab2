@@ -12,6 +12,7 @@ output: html_document
 library(tidyverse)
 library(magrittr)
 library(viridis)
+library(Hmisc)
 
 # import data
 df <- rio::import(file     = "https://github.com/fivethirtyeight/data/raw/master/alcohol-consumption/drinks.csv",
@@ -138,4 +139,23 @@ ggplot(df, aes(x = type, y = servings, fill = type)) +
 
 Qualitatively, the average number of servings consumed appears to be lowest for wine and highest for beer. Spirits falls in the middle. Consumption of all types also appears to be positively skewed, with the majority of people consuming low levels of alcohol and a tail of increasing heavy drinkers. Win has a particularly skinny tail, with the vast majority of people cosuming little to no one and some individuals consuming quite a bit of wine. The greatest number of a type of serving was for spirits. 
 
+## Reproduced the plot
 
+```{r reproduce_plot}
+df %>%
+  spread(key = type, value = servings) %>%
+  arrange(desc(total_litres_of_pure_alcohol)) %>%
+  dplyr::slice(1:25) %>%
+  gather(key = "type", value = "servings", beer:wine) %>%
+  ggplot(aes(x = fct_reorder(country, total_litres_of_pure_alcohol), y = total_litres_of_pure_alcohol)) + 
+    geom_col(fill = "steelblue2", alpha = .8) +
+    coord_flip() + 
+    facet_grid(. ~ type, labeller = labeller(type = capitalize)) + #I'm not sure why you would want to facet_wrap by type of alcohol if you are going to plot total number of aclohol servings on the Y-axis
+    theme_minimal() +
+    labs(title = "Countries with the highest alcohol consumption",
+         subtitle = "Top 25 countries displayed",
+         y = "Total number of alcohol servings",
+         x = "Country")
+  
+```
+)
