@@ -2,12 +2,18 @@
 title: "edld610_lab2"
 author: "Cameron Kay"
 date: "1/13/2019"
-output: html_document
+output:
+  html_document:
+    highlight: espresso
+    theme: lumen
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
 ---
 
-# Write the code to load the data in directly from the web
+## Write the code to load the data in directly from the web
 
-```{r setup, include = FALSE}
+```{r setup, message = FALSE}
 # load packages
 library(tidyverse)
 library(magrittr)
@@ -20,11 +26,11 @@ df <- rio::import(file     = "https://github.com/fivethirtyeight/data/raw/master
   janitor::clean_names()
 ```
 
-# Explore the overall distribution of total alcohol consumed
+## Explore the overall distribution of total alcohol consumed
 
-## Histogram
+### Histogram
 
-### Play with the number of bins
+#### Play with the number of bins
 
 ```{r histogram}
 # histogram with 5 bins
@@ -63,11 +69,11 @@ ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
   theme_bw()
 ```
 
-### Justify the number of bins
+#### Justify the number of bins
 
-I think 13 bins is the correct number of bins for this dataset. If the idea is to give an impression of the underlying population distribution, 13 bins shows the nuance of the data, while not includign as much presumably random variation of the 15 bin histrogram. On the other side, the 5 bin histogram seems to hide too much of the underlying distribution. 
+I think 13 bins is the correct number of bins for this dataset. If the idea is to give an impression of the underlying population distribution, 13 bins shows the nuance of the data, while not including as much presumably random variation as the 15 bin histrogram. On the other side, the 10 bin histogram seems to hide too much of the underlying distribution. 
 
-## Density Plot
+### Density Plot
 
 ```{r density_plots}
 # density plot with a bandwidth of .1
@@ -90,22 +96,28 @@ ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
   geom_density(bw = 1, fill = "darkorchid4", color = "gray17") +
   theme_bw()
 
-# density plot with a bandwidth of 3
+# density plot with a bandwidth of 1.5
 ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
-  geom_density(bw = 3, fill = "darkorchid4", color = "gray17") +
+  geom_density(bw = 1.5, fill = "darkorchid4", color = "gray17") +
+  theme_bw()
+
+# density plot with a bandwidth of 2
+ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
+  geom_density(bw = 2, fill = "darkorchid4", color = "gray17") +
   theme_bw()
 
 # density plot with the default bandwidth
 ggplot(df, aes(x = total_litres_of_pure_alcohol)) +
   geom_density(fill = "darkorchid4", color = "gray17") +
   theme_bw()
+
 ```
 
-### Justify the bandwidth
+#### Justify the bandwidth
 
-Using the same criteria as the histogram, I would go with a bandwidth of .9. I believe the .5 distribution provides too much nuance in the data and may be including too much random variation. A bandwidth of 1 and the default bandwidth, on the other hand, appear to minimize the valleys between the the peaks.
+Using the same criteria as the histogram, I would go with a bandwidth of .9. I believe the .5 distribution provides too much nuance in the data and may be including too much random variation. A bandwidth of 1 and the default bandwidth, on the other hand, appear to minimize the valleys between the peaks and may hide the trimodal nature of the distribution.
 
-# Reorganize the data so I have a type and servings column.
+## Reorganize the data so I have a type and servings column.
 
 ```{r reorganize_data}
 df %<>%
@@ -113,7 +125,7 @@ df %<>%
   mutate(type = gsub("_servings", "", type))
 ```
 
-## Evaluate the distribution of servings by type using at least three different methods
+### Evaluate the distribution of servings by type using at least three different methods
 
 ```{r visualize_servings_by_type}
 # boxplot
@@ -135,27 +147,44 @@ ggplot(df, aes(x = type, y = servings, fill = type)) +
   theme_bw()
 ```
 
-## Conclusion
+### Conclusion
 
-Qualitatively, the average number of servings consumed appears to be lowest for wine and highest for beer. Spirits falls in the middle. Consumption of all types also appears to be positively skewed, with the majority of people consuming low levels of alcohol and a tail of increasing heavy drinkers. Win has a particularly skinny tail, with the vast majority of people cosuming little to no one and some individuals consuming quite a bit of wine. The greatest number of a type of serving was for spirits. 
+Qualitatively, the average number of servings consumed appears to be lowest for wine and highest for beer. Spirits fall in the middle. Consumption of all types also appears to be positively skewed, with the majority of people consuming low levels of alcohol and a tail of increasingly heavy drinkers. Wine has a particularly skinny tail, with the vast majority of people cosuming little to no wine and some individuals consuming quite a bit of wine. The greatest number of servings for any alcohol type was for spirits.
 
-## Reproduced the plot
+### Reproduce the plot
 
 ```{r reproduce_plot}
+# reproduced plot
 df %>%
   spread(key = type, value = servings) %>%
   arrange(desc(total_litres_of_pure_alcohol)) %>%
   dplyr::slice(1:25) %>%
   gather(key = "type", value = "servings", beer:wine) %>%
-  ggplot(aes(x = fct_reorder(country, total_litres_of_pure_alcohol), y = total_litres_of_pure_alcohol)) + 
+  ggplot(aes(x = fct_reorder(country, total_litres_of_pure_alcohol), 
+             y = total_litres_of_pure_alcohol)) + # shouldn't servings be on the y-axis?
     geom_col(fill = "steelblue2", alpha = .8) +
     coord_flip() + 
-    facet_grid(. ~ type, labeller = labeller(type = capitalize)) + #I'm not sure why you would want to facet_wrap by type of alcohol if you are going to plot total number of aclohol servings on the Y-axis
+    facet_grid(. ~ type, labeller = labeller(type = capitalize)) + 
     theme_minimal() +
     labs(title = "Countries with the highest alcohol consumption",
          subtitle = "Top 25 countries displayed",
          y = "Total number of alcohol servings",
          x = "Country")
-  
+
+# reproduced plot with number of servings for each alcohol type on the y-axis
+df %>%
+  spread(key = type, value = servings) %>%
+  arrange(desc(total_litres_of_pure_alcohol)) %>%
+  dplyr::slice(1:25) %>%
+  gather(key = "type", value = "servings", beer:wine) %>%
+  ggplot(aes(x = fct_reorder(country, total_litres_of_pure_alcohol), 
+             y = servings)) + 
+    geom_col(fill = "steelblue2", alpha = .8) +
+    coord_flip() + 
+    facet_grid(. ~ type, labeller = labeller(type = capitalize)) +
+    theme_minimal() +
+    labs(title = "Countries with the highest alcohol consumption",
+         subtitle = "Top 25 countries displayed",
+         y = "Total number of alcohol servings",
+         x = "Country")
 ```
-)
